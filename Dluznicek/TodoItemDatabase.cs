@@ -19,12 +19,7 @@ namespace Dluznicek
         {
             return database.Table<TodoItem>().ToListAsync();
         }
-        public Task<List<TodoItem>> GetItemsAsyncnew()
-        {
-            var SelectedDate = new DateTime(2018, 2, 20);
-            var vysledek = database.Table<TodoItem>().Where(x => x.Datum >= SelectedDate)
-            return vysledek;
-        }
+        
         public Task<List<TodoItem>> GetItemsNotDoneAsync()
         {
             return database.QueryAsync<TodoItem>("SELECT * FROM [TodoItem] WHERE [Done] = 0"); // klasické SQL

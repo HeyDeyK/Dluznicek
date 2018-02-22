@@ -17,27 +17,41 @@
         Title="MainWindow" Height="350" Width="525">
 
     <TabControl>
-            <TabItem Header="Přidání" >
-                <Grid>
-                    
+        <TabItem Header="Přidání" >
+            <Grid>
 
 
-                    <TextBox x:Name="txtCastka" HorizontalAlignment="Left" Height="23" Margin="10,16,0,0" TextWrapping="Wrap" Text="500" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="txtName" HorizontalAlignment="Left" Height="23" Margin="146,16,0,0" TextWrapping="Wrap" Text="kytara" VerticalAlignment="Top" Width="120"/>
-                    <Button Content="Button" HorizontalAlignment="Left" Margin="431,16,0,0" VerticalAlignment="Top" Width="76" Height="23" Click="Button_Click"/>
-                    <DatePicker x:Name="date_picker" HorizontalAlignment="Left" Margin="293,16,0,0" VerticalAlignment="Top" Width="120" Height="23" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="Stats">
-            <ListView x:Name="SeznamListView"  Margin="10,42,10,10">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Item Price" DisplayMemberBinding="{Binding Item_price}" Width="150"/>
-                        <GridViewColumn Header="Item Name" DisplayMemberBinding="{Binding Item_name}" Width="150"/>
-                        <GridViewColumn Header="Datum" DisplayMemberBinding="{Binding Datum, StringFormat=dd-MM-yyyy}" Width="150"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+
+                <TextBox x:Name="txtCastka" HorizontalAlignment="Left" Height="23" Margin="10,16,0,0" TextWrapping="Wrap" Text="500" VerticalAlignment="Top" Width="120"/>
+                <TextBox x:Name="txtName" HorizontalAlignment="Left" Height="23" Margin="146,16,0,0" TextWrapping="Wrap" Text="kytara" VerticalAlignment="Top" Width="120"/>
+                <Button Content="Button" HorizontalAlignment="Left" Margin="431,16,0,0" VerticalAlignment="Top" Width="76" Height="23" Click="Button_Click"/>
+                <DatePicker x:Name="date_picker" HorizontalAlignment="Left" Margin="293,16,0,0" VerticalAlignment="Top" Width="120" Height="23" />
+            </Grid>
+
         </TabItem>
-        </TabControl>
+        <TabItem Header="Stats">
+            <Grid>
+                <Button Content="Vše" Height="25" Margin="16,10,0,0" Click="Button_Click_All" HorizontalAlignment="Left" Width="70" VerticalAlignment="Top"/>
+                <Button Content="Rok" Height="25" Width="70" Margin="92,10,0,0" Click="Button_Click_Year" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <Button Content="Měsíc" Height="25" Width="70" Margin="167,10,0,0" Click="Button_Click_Month" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <Button Content="Týden" Height="25" Width="70" Margin="242,10,0,0" Click="Button_Click_Week" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <ListView x:Name="SeznamListView"  Margin="10,35,10,24">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Item Price" DisplayMemberBinding="{Binding Item_price}" Width="150"/>
+                            <GridViewColumn Header="Item Name" DisplayMemberBinding="{Binding Item_name}" Width="150"/>
+                            <GridViewColumn Header="Datum" DisplayMemberBinding="{Binding Datum, StringFormat=dd-MM-yyyy}" Width="150"/>
+                        </GridView>
+                    </ListView.View>
+
+                </ListView>
+                <TextBlock Text="Součet ceny: " FontWeight="Bold" FontSize="18" Margin="317,10,-33,250"></TextBlock>
+                <TextBlock x:Name="txt_items_price" Text="" FontWeight="Bold" FontSize="18" Margin="430,10,-146,250" Foreground="#FF8BC34A"></TextBlock>
+            </Grid>
+
+
+        </TabItem>
+
+
+    </TabControl>
 </Window>
