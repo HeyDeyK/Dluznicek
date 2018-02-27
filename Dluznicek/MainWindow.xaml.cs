@@ -47,7 +47,16 @@ namespace Dluznicek
                 {
                     Name = "VSE"
                 }
-            };
+            };  
+            /*Polozka polozka2 = new Polozka()
+            {
+                Item_name = "raketa",
+                Item_price = "999",
+                Category = new Category()
+                {
+                    Name = "VSE"
+                }
+            };*/
             _dataAccess.InsertWithChildren(polozka);
             Polozka polozky = _dataAccess.GetAllWithChildren<Polozka>(polozka.ID);
         }

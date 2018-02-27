@@ -18,9 +18,11 @@ namespace Dluznicek.Abstract
         private DateTime? datum { get; set; }
         public int Done { get; set; }
 
-        [ManyToOne(CascadeOperations = CascadeOperation.All)]
+        [ManyToOne]      // Many to one relationship with Stock
         public Category Category { get; set; }
 
+        [ForeignKey(typeof(Category))]
+        public int CategoryId { get; set; }
         public string Item_price
         {
             get { return item_price; }

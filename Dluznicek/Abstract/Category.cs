@@ -13,6 +13,7 @@ namespace Dluznicek.Abstract
     {
 
         public string Name { get; set; }
+
         [OneToMany(CascadeOperations = CascadeOperation.All)]      // One to many relationship with Valuation
         public List<Polozka> Polozky { get; set; }
     }

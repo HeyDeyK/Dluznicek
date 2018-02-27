@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLiteNetExtensions.Extensions;
-using Dluznicek.Abstract;
-using SQLiteNetExtensions.Attributes;
 using SQLite;
+using Dluznicek.Abstract;
+using SQLiteNetExtensions.Extensions;
 
 namespace Dluznicek.DataAccess
 {
@@ -19,10 +18,9 @@ namespace Dluznicek.DataAccess
         /// </summary>
         public DataAccess()
         {
-            _db = new SQLiteConnection("newdbpls.db3");
+            _db = new SQLiteConnection("budwar.db3");
             _db.CreateTable<Category>();
             _db.CreateTable<Polozka>();
-        
 
         }
 
