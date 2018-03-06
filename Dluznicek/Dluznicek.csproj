@@ -85,6 +85,7 @@
     </ApplicationDefinition>
     <Compile Include="Abstract\ATable.cs" />
     <Compile Include="Abstract\Category.cs" />
+    <Compile Include="Abstract\Dluh.cs" />
     <Compile Include="Abstract\Polozka.cs" />
     <Compile Include="DataAccess\DataAccess.cs" />
     <Compile Include="Evidence.cs" />

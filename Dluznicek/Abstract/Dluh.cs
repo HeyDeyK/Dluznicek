@@ -4,23 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
-using SQLiteNetExtensions.Extensions;
 using SQLiteNetExtensions.Attributes;
-using Dluznicek.Abstract;
+using SQLiteNetExtensions.Extensions;
 
-namespace Dluznicek
+namespace Dluznicek.Abstract
 {
-    public class TodoItem
+    class Dluh : ATable
     {
-        public int ID { get; set; }
         public string Name { get; set; }
         public string Item_price { get; set; }
+        public string Item_sazba { get; set; }
         public DateTime? Datum { get; set; }
-        public string Kategorie {get;set;}
-        
-        public TodoItem()
-        {
 
-        }
+        public string aktdluzi { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace Dluznicek
                 if (_database == null)
                 {
                     var fileHelper = new FileHelper();
-                    _database = new TodoItemDatabase(fileHelper.GetLocalFilePath("TodoSQLite7.db3"));
+                    _database = new TodoItemDatabase(fileHelper.GetLocalFilePath("FinalSQL2.db3"));
                 }
                 return _database;
             }

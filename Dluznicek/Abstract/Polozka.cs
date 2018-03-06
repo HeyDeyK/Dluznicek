@@ -13,31 +13,19 @@ namespace Dluznicek.Abstract
 {
     class Polozka : ATable
     {
-        private string item_price { get; set; }
-        private string item_name { get; set; }
-        private DateTime? datum { get; set; }
-        public int Done { get; set; }
+        public string Name { get; set; }
+        public string Item_price { get; set; }
+        public DateTime? Datum { get; set; }
 
-        [ManyToOne]      // Many to one relationship with Stock
-        public Category Category { get; set; }
 
         [ForeignKey(typeof(Category))]
-        public int CategoryId { get; set; }
-        public string Item_price
-        {
-            get { return item_price; }
-            set { item_price = value; }
-        }
+        public int CategoryID { get; set; }
+        [ManyToOne(CascadeOperations = CascadeOperation.All)]
+        public Category Category { get; set; }
 
-        public DateTime? Datum
-        {
-            get { return datum; }
-            set { datum = value; }
-        }
-        public string Item_name
-        {
-            get { return item_name; }
-            set { item_name = value; }
-        }
+
+
+
     }
+
 }

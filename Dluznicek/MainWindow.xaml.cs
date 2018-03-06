@@ -23,61 +23,86 @@ namespace Dluznicek
     /// </summary>
     public partial class MainWindow : Window
     {
-        private SQLiteConnection db = new SQLiteConnection("TodoSQLite7.db3");
+        private SQLiteConnection db = new SQLiteConnection("FinalSQL2.db3");
+        private SQLiteConnection db2 = new SQLiteConnection("DataSQL2.db3");
         ObservableCollection<TodoItem> itemsFromDb;
-        ObservableCollection<TodoItem> vysledkyDb;
+        ObservableCollection<TodoItem> vysledkyDb2;
+        
         readonly DataAccess.DataAccess _dataAccess = new DataAccess.DataAccess();
         public MainWindow()
         {
             InitializeComponent();
             LoadTable();
             date_picker.SelectedDate = DateTime.Today;
+            date_picker.SelectedDate = DateTime.Today;
             GetStats(1, 1, 1);
-            Vlozitjakojedno();
+            KontrolaDluh();
+        }
+        public void KontrolaDluh()
+        {
+            int today_den = (int)DateTime.Now.Day;
+            int today_month = (int)DateTime.Now.Month;
+            int today_year = (int)DateTime.Now.Year;
+            var SelectedDate = new DateTime(today_year, today_month, today_den);
+            var vysledek = db2.Table<Dluh>().Where(x => x.Datum >= SelectedDate);
+            if(vysledek != null)
+            {
+                MessageBox.Show("cus");
+            }
             
         }
-        private void Vlozitjakojedno()
+        private void LoadCategory()
         {
-            //Category seznam = new Category();
-            Polozka polozka = new Polozka()
+            vysledkyDb2 = new ObservableCollection<TodoItem>(App.Database.GetItemsAsync().Result);
+            foreach(var item in vysledkyDb2)
             {
-                Item_name = "raketa",
-                Item_price = "999",
-                Category = new Category()
-                {
-                    Name = "VSE"
-                }
-            };  
-            /*Polozka polozka2 = new Polozka()
-            {
-                Item_name = "raketa",
-                Item_price = "999",
-                Category = new Category()
-                {
-                    Name = "VSE"
-                }
-            };*/
-            _dataAccess.InsertWithChildren(polozka);
-            Polozka polozky = _dataAccess.GetAllWithChildren<Polozka>(polozka.ID);
-        }
-        private void dalsivlozeni()
-        {
-            Polozka polozka = new Polozka()
-            {
-                Item_name = "raketa",
-                Item_price = "999"
-            };
+                ComboBoxItem cboxitem = new ComboBoxItem();
+                cboxitem.Content = item.Kategorie;
+                cbox.Items.Add(cboxitem);
+            }
+            
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (chbox.IsChecked ?? false)
+            {
+                Dluh dluh = new Dluh()
+                {
+                    Name = txtName.Text,
+                    Item_price = txtCastka.Text,
+                    Datum = dluh_picker.SelectedDate,
+                    Item_sazba = txt_sazba.Text
+                };
+                _dataAccess.InsertWithChildren(dluh);
+            }
+            else
+            {
+                string selected = cbox.Text;
+                Polozka polozka = new Polozka()
+                {
+                    Name = txtName.Text,
+                    Item_price = txtCastka.Text,
+                    Datum = DateTime.Today,
+                    Category = new Category()
+                    {
+                        Name = cbox.Text
+                    }
+                };
+
+                _dataAccess.InsertWithChildren(polozka);
+
+                Polozka polozky = _dataAccess.GetAllWithChildren<Polozka>(polozka.ID);
+
+                TodoItem item = new TodoItem();
+                item.Item_price = txtCastka.Text;
+                item.Datum = date_picker.SelectedDate;
+                item.Name = txtName.Text;
+                item.Kategorie = cbox.Text;
+
+                App.Database.SaveItemAsync(item);
+                itemsFromDb.Add(item);
+            }
             
-            TodoItem item = new TodoItem();
-            item.Item_price = txtCastka.Text;
-            item.Datum = date_picker.SelectedDate;
-            item.Item_name = txtName.Text;
-            App.Database.SaveItemAsync(item);
-            itemsFromDb.Add(item);
-            SeznamListView.ItemsSource = itemsFromDb;
         }
         public void LoadTable()
         {
@@ -128,6 +153,64 @@ namespace Dluznicek
             int today_year = (int)DateTime.Now.Year;
             GetStats(today_year, today_month, today_den-7);
             //Console.WriteLine("YEAR: "+(today_year-1) + "Month: "+ today_month + "Den: "+ today_den);
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            GetStats(1, 1, 1);
+            if (TabDluhy.IsSelected)
+            {
+                List<Dluh> items = new List<Dluh>();
+
+                int celkova_cena = 0;
+                var SelectedDate = DateTime.Today;
+                var vysledek = db2.Table<Dluh>().Where(x => x.Datum >= SelectedDate);
+                
+                foreach (var item in vysledek)
+                {
+                    celkova_cena += Convert.ToInt32(item.Item_price);
+                    //items.Add(new Dluh() { Name = item.Name,Datum=item.Datum,aktdluzi=item.Item_price });
+                }
+                dluhy_price.Content = celkova_cena.ToString();
+                SeznamListViewDluhy.ItemsSource = vysledek;
+            }
+        }
+
+        private void cbox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBoxItem typeItem = (ComboBoxItem)cbox2.SelectedItem;
+            string value = typeItem.Content.ToString();
+            Console.WriteLine(value);
+            var vysledek = db.Table<TodoItem>().Where(x => x.Kategorie == value);
+            SeznamListView2.ItemsSource = vysledek;
+            int celkova_cena = 0;
+            foreach (var item in vysledek)
+            {
+                celkova_cena += Convert.ToInt32(item.Item_price);
+
+            }
+            sezPrice.Content = celkova_cena;
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            dluh_label.Visibility = Visibility.Visible;
+            dluh_picker.Visibility = Visibility.Visible;
+            label_sazba.Visibility = Visibility.Visible;
+            txt_sazba.Visibility = Visibility.Visible;
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            dluh_label.Visibility = Visibility.Hidden;
+            dluh_picker.Visibility = Visibility.Hidden;
+            label_sazba.Visibility = Visibility.Hidden;
+            txt_sazba.Visibility = Visibility.Hidden;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

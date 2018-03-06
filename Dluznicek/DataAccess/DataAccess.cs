@@ -18,9 +18,10 @@ namespace Dluznicek.DataAccess
         /// </summary>
         public DataAccess()
         {
-            _db = new SQLiteConnection("budwar.db3");
+            _db = new SQLiteConnection("DataSQL2.db3");
             _db.CreateTable<Category>();
             _db.CreateTable<Polozka>();
+            _db.CreateTable<Dluh>();
 
         }
 

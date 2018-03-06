@@ -11,7 +11,6 @@ namespace Dluznicek.Abstract
 {
     class Category : ATable
     {
-
         public string Name { get; set; }
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]      // One to many relationship with Valuation
