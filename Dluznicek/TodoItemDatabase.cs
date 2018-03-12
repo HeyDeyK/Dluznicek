@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using Dluznicek.Abstract;
 
 namespace Dluznicek
 {
@@ -19,7 +20,7 @@ namespace Dluznicek
         {
             return database.Table<TodoItem>().ToListAsync();
         }
-        
+
         public Task<List<TodoItem>> GetItemsNotDoneAsync()
         {
             return database.QueryAsync<TodoItem>("SELECT * FROM [TodoItem] WHERE [Done] = 0"); // klasické SQL

@@ -23,10 +23,13 @@ namespace Dluznicek
     /// </summary>
     public partial class MainWindow : Window
     {
-        private SQLiteConnection db = new SQLiteConnection("FinalSQL2.db3");
-        private SQLiteConnection db2 = new SQLiteConnection("DataSQL2.db3");
+        private SQLiteConnection db = new SQLiteConnection("FinalSQLClean.db3");
+        private SQLiteConnection db2 = new SQLiteConnection("DataSQLClean4.db3");
         ObservableCollection<TodoItem> itemsFromDb;
+        ObservableCollection<Dluh> itemsFromDb2;
+        List<Dluh> itemsDluhy = new List<Dluh>();
         ObservableCollection<TodoItem> vysledkyDb2;
+        private int cisloDluhu = 0;
         
         readonly DataAccess.DataAccess _dataAccess = new DataAccess.DataAccess();
         public MainWindow()
@@ -35,8 +38,10 @@ namespace Dluznicek
             LoadTable();
             date_picker.SelectedDate = DateTime.Today;
             date_picker.SelectedDate = DateTime.Today;
-            GetStats(1, 1, 1);
+            GetStats(1, 1, 1, "já zaklad");
+            LoadDluhy();
             KontrolaDluh();
+
         }
         public void KontrolaDluh()
         {
@@ -44,10 +49,25 @@ namespace Dluznicek
             int today_month = (int)DateTime.Now.Month;
             int today_year = (int)DateTime.Now.Year;
             var SelectedDate = new DateTime(today_year, today_month, today_den);
-            var vysledek = db2.Table<Dluh>().Where(x => x.Datum >= SelectedDate);
+            var vysledek = db2.Table<Dluh>().Where(x => x.Datum <= SelectedDate);
             if(vysledek != null)
             {
-                MessageBox.Show("cus");
+                Console.WriteLine( "hahaha");
+                string okno = "";
+                foreach(var item in vysledek)
+                {
+                    okno = okno +"Nezaplacená položka: "+ item.Name+" termín: " + item.Datum + "\n";
+                }
+                if(string.IsNullOrEmpty(okno))
+                {
+
+                }
+                else
+                {
+                    MessageBox.Show(okno, "Nezaplacené dluhy");
+                }
+                
+
             }
             
         }
@@ -71,9 +91,11 @@ namespace Dluznicek
                     Name = txtName.Text,
                     Item_price = txtCastka.Text,
                     Datum = dluh_picker.SelectedDate,
+                    Stav = "Nezaplaceno",
                     Item_sazba = txt_sazba.Text
                 };
                 _dataAccess.InsertWithChildren(dluh);
+                
             }
             else
             {
@@ -102,15 +124,40 @@ namespace Dluznicek
                 App.Database.SaveItemAsync(item);
                 itemsFromDb.Add(item);
             }
+            GetStats(1, 1, 1,"po ulozeni");
+            LoadDluhy();
+
             
+        }
+        public void LoadDluhy()
+        {
+            List<Dluh> items = new List<Dluh>();
+            int celkova_cena = 0;
+            var SelectedDate = new DateTime(1, 1, 1);
+            var vysledek = db2.Table<Dluh>().Where(x => x.Datum >= SelectedDate);
+            Console.WriteLine(vysledek);
+
+            foreach (var item in vysledek)
+            {
+                itemsDluhy.Add(item);
+                if (item.Stav == "Nezaplaceno")
+                {
+                    celkova_cena += Convert.ToInt32(item.Item_price);
+                }
+
+                //items.Add(new Dluh() { Name = item.Name,Datum=item.Datum,aktdluzi=item.Item_price });
+            }
+            dluhy_price.Content = celkova_cena.ToString();
+            SeznamListViewDluhy.ItemsSource = vysledek;
         }
         public void LoadTable()
         {
             itemsFromDb = new ObservableCollection<TodoItem>(App.Database.GetItemsAsync().Result);
             SeznamListView.ItemsSource = itemsFromDb;
         }
-        public void GetStats(int rok,int mesic,int den)
+        public void GetStats(int rok,int mesic,int den,string kdo)
         {
+            Console.WriteLine("Probiham " + kdo);
             itemsFromDb.Clear();
             int celkova_cena = 0;
             var SelectedDate = new DateTime(rok, mesic, den);
@@ -125,7 +172,7 @@ namespace Dluznicek
 
         private void Button_Click_All(object sender, RoutedEventArgs e)
         {
-            GetStats(1, 1, 1);
+            GetStats(1, 1, 1, "já all");
 
         }
         private void Button_Click_Year(object sender, RoutedEventArgs e)
@@ -133,7 +180,7 @@ namespace Dluznicek
             int today_den = (int)DateTime.Now.Day;
             int today_month = (int)DateTime.Now.Month;
             int today_year = (int)DateTime.Now.Year;
-            GetStats(today_year-1, today_month, today_den);
+            GetStats(today_year-1, today_month, today_den,"já");
             //Console.WriteLine("YEAR: "+(today_year-1) + "Month: "+ today_month + "Den: "+ today_den);
         }
         private void Button_Click_Month(object sender, RoutedEventArgs e)
@@ -141,7 +188,7 @@ namespace Dluznicek
             int today_den = (int)DateTime.Now.Day;
             int today_month = (int)DateTime.Now.Month;
             int today_year = (int)DateTime.Now.Year;
-            GetStats(today_year, today_month-1, today_den);
+            GetStats(today_year, today_month-1, today_den, "já");
 
             //Console.WriteLine("YEAR: "+(today_year-1) + "Month: "+ today_month + "Den: "+ today_den);
             //https://stackoverflow.com/questions/591752/get-the-previous-months-first-and-last-day-dates-in-c-sharp
@@ -151,28 +198,19 @@ namespace Dluznicek
             int today_den = (int)DateTime.Now.Day;
             int today_month = (int)DateTime.Now.Month;
             int today_year = (int)DateTime.Now.Year;
-            GetStats(today_year, today_month, today_den-7);
+            GetStats(today_year, today_month, today_den-7, "já");
             //Console.WriteLine("YEAR: "+(today_year-1) + "Month: "+ today_month + "Den: "+ today_den);
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GetStats(1, 1, 1);
+            
             if (TabDluhy.IsSelected)
             {
-                List<Dluh> items = new List<Dluh>();
-
-                int celkova_cena = 0;
-                var SelectedDate = DateTime.Today;
-                var vysledek = db2.Table<Dluh>().Where(x => x.Datum >= SelectedDate);
                 
-                foreach (var item in vysledek)
-                {
-                    celkova_cena += Convert.ToInt32(item.Item_price);
-                    //items.Add(new Dluh() { Name = item.Name,Datum=item.Datum,aktdluzi=item.Item_price });
-                }
-                dluhy_price.Content = celkova_cena.ToString();
-                SeznamListViewDluhy.ItemsSource = vysledek;
+            }
+            if(TabStats.IsSelected)
+            {
             }
         }
 
@@ -211,6 +249,45 @@ namespace Dluznicek
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             
+        }
+        
+        private void ZiskatIndex(object sender, SelectionChangedEventArgs e)
+        {
+            cisloDluhu = SeznamListViewDluhy.SelectedIndex ;
+            Console.WriteLine("proč" + cisloDluhu);
+            
+            
+        }
+        private void ZaplacenoButton(object sender, RoutedEventArgs e)
+        {
+            Dluh dluh = new Dluh()
+            {
+                ID = itemsDluhy[cisloDluhu].ID,
+                Name = itemsDluhy[cisloDluhu].Name,
+                aktdluzi = "0",
+                Stav = "Zaplaceno",
+                Item_price = itemsDluhy[cisloDluhu].Item_price,
+                Item_sazba = itemsDluhy[cisloDluhu].Item_sazba,
+                Datum = itemsDluhy[cisloDluhu].Datum
+            };
+            _dataAccess.UpdateWithChildren(dluh);
+            LoadDluhy();
+
+        }
+        private void NezaplacenoButton(object sender, RoutedEventArgs e)
+        {
+            Dluh dluh = new Dluh()
+            {
+                ID = itemsDluhy[cisloDluhu].ID,
+                Name = itemsDluhy[cisloDluhu].Name,
+                aktdluzi = "0",
+                Stav = "Nezaplaceno",
+                Item_price = itemsDluhy[cisloDluhu].Item_price,
+                Item_sazba = itemsDluhy[cisloDluhu].Item_sazba,
+                Datum = itemsDluhy[cisloDluhu].Datum
+            };
+            _dataAccess.UpdateWithChildren(dluh);
+            LoadDluhy();
         }
     }
 }

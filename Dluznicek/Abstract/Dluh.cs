@@ -15,6 +15,7 @@ namespace Dluznicek.Abstract
         public string Item_price { get; set; }
         public string Item_sazba { get; set; }
         public DateTime? Datum { get; set; }
+        public string Stav { get; set; }
 
         public string aktdluzi { get; set; }
     }

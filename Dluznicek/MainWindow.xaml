@@ -16,14 +16,14 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="MainWindow" Height="437.209" Width="695.571">
 
-    <TabControl SelectionChanged="TabControl_SelectionChanged">
+    <TabControl SelectionChanged="TabControl_SelectionChanged" x:Name="adw">
         <TabItem Header="Přidání" >
             <Grid>
                 <Label Content="Částka" FontWeight="Bold" FontSize="16" Margin="10,13,0,0" HorizontalAlignment="Left" Width="63" Height="30" VerticalAlignment="Top"></Label>
                 <Label Content="Položka" FontWeight="Bold" FontSize="16" Margin="10,43,0,0" RenderTransformOrigin="0.487,1.166" Height="28" VerticalAlignment="Top" HorizontalAlignment="Left" Width="93"></Label>
                 <Label Content="Datum" FontWeight="Bold" FontSize="16" Margin="10,71,0,0" Height="35" VerticalAlignment="Top" HorizontalAlignment="Left" Width="76"></Label>
                 <Label Content="Seznam" FontWeight="Bold" FontSize="16" Margin="10,111,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="63"></Label>
-                <Label Content="Je to dluh?" FontWeight="Bold" FontSize="16" Margin="10,151,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="93"></Label>
+                <Label Content="Je to dluh?" FontWeight="Bold" FontSize="16" Margin="10,151,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="93"/>
                 <TextBox x:Name="txtCastka" HorizontalAlignment="Left" Height="23" Margin="108,11,0,0" TextWrapping="Wrap" Text="500" VerticalAlignment="Top" Width="251"/>
                 <TextBox x:Name="txtName" HorizontalAlignment="Left" Height="28" Margin="108,39,0,0" TextWrapping="Wrap" Text="kytara" VerticalAlignment="Top" Width="251"/>
                 <Button Content="Přidat" HorizontalAlignment="Left" Margin="229,0,0,10" Width="130" Height="27" Click="Button_Click" VerticalAlignment="Bottom"/>
@@ -36,12 +36,12 @@
                 <CheckBox x:Name="chbox" Margin="128,154,0,0" RenderTransformOrigin="2.33,7.458" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="30" />
                 <Label x:Name="dluh_label" Content="Datum splacení" FontWeight="Bold" FontSize="16" Margin="10,180,0,0" Height="35" VerticalAlignment="Top" HorizontalAlignment="Left" Width="130" Visibility="Hidden"/>
                 <DatePicker x:Name="dluh_picker" HorizontalAlignment="Left" Margin="145,181,0,0" VerticalAlignment="Top" Width="214" Height="23" Visibility="Hidden" />
-                <Label x:Name="label_sazba" Content="Úroková sazba" FontSize="16" FontWeight="Bold" Margin="10,215,-10,-215" Visibility="Hidden"></Label>
+                <Label x:Name="label_sazba" Content="Úroková sazba" FontSize="16" FontWeight="Bold" Margin="10,215,0,0" Height="28" VerticalAlignment="Top" Visibility="Hidden" HorizontalAlignment="Left" Width="130"></Label>
                 <TextBox x:Name="txt_sazba" HorizontalAlignment="Left" Height="28" Margin="145,215,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="214" Visibility="Hidden"></TextBox>
             </Grid>
 
         </TabItem>
-        <TabItem Header="Stats">
+        <TabItem Header="Stats" x:Name="TabStats">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"/>
@@ -53,8 +53,8 @@
                 <ListView x:Name="SeznamListView"  Margin="10,35,10,24" Grid.ColumnSpan="2">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Item Price" DisplayMemberBinding="{Binding Item_price}" Width="150"/>
-                            <GridViewColumn Header="Item Name" DisplayMemberBinding="{Binding Name}" Width="150"/>
+                            <GridViewColumn Header="Položka" DisplayMemberBinding="{Binding Item_price}" Width="150"/>
+                            <GridViewColumn Header="Částka" DisplayMemberBinding="{Binding Name}" Width="150"/>
                             <GridViewColumn Header="Datum" DisplayMemberBinding="{Binding Datum, StringFormat=dd-MM-yyyy}" Width="150"/>
                         </GridView>
                     </ListView.View>
@@ -78,8 +78,8 @@
                 <ListView x:Name="SeznamListView2"  Margin="10,55,10,24">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Item Price" DisplayMemberBinding="{Binding Item_price}" Width="150"/>
-                            <GridViewColumn Header="Item Name" DisplayMemberBinding="{Binding Name}" Width="150"/>
+                            <GridViewColumn Header="Položka" DisplayMemberBinding="{Binding Name}" Width="150"/>
+                            <GridViewColumn Header="Částka" DisplayMemberBinding="{Binding Item_price}" Width="150"/>
                             <GridViewColumn Header="Datum" DisplayMemberBinding="{Binding Datum, StringFormat=dd-MM-yyyy}" Width="150"/>
                         </GridView>
                     </ListView.View>
@@ -88,18 +88,22 @@
         </TabItem>
         <TabItem Header="Dluhy" x:Name="TabDluhy">
             <Grid>
-                <ListView x:Name="SeznamListViewDluhy" Height="327" Margin="0,26,184,26">
+                <ListView x:Name="SeznamListViewDluhy" Margin="10,47,16,51" SelectionChanged="ZiskatIndex" SelectedIndex="0">
                     <ListView.View>
                         <GridView x:Name="tramvaj">
-                            <GridViewColumn Header="Item Name" DisplayMemberBinding="{Binding Name}" Width="120"/>
-                            <GridViewColumn Header="Item Price" DisplayMemberBinding="{Binding Item_price}" Width="100"/>
+                            <GridViewColumn Header="Položka" DisplayMemberBinding="{Binding Name}" Width="120"/>
+                            <GridViewColumn Header="Částka" DisplayMemberBinding="{Binding Item_price}" Width="100"/>
                             <GridViewColumn Header="Datum splacení" DisplayMemberBinding="{Binding Datum, StringFormat=dd-MM-yyyy}" Width="150"/>
                             <GridViewColumn Header="Sazba" DisplayMemberBinding="{Binding Item_sazba}" Width="100"/>
+                            <GridViewColumn Header="Stav" DisplayMemberBinding="{Binding Stav}" Width="100" />
                         </GridView>
                     </ListView.View>
 
                 </ListView>
-                <Label x:Name="dluhy_price" Content="00" Margin="0,0,649,0"></Label>
+                <Label Content="Aktuálně vám dluží:" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="124"/>
+                <Label x:Name="dluhy_price" Content="" Margin="124,0,0,0" FontWeight="Bold" HorizontalAlignment="Left" Width="498" Height="26" VerticalAlignment="Top"></Label>
+                <Button Margin="10,332,558,10" Height="Auto" Content="Zaplaceno" Click="ZaplacenoButton"></Button>
+                <Button Margin="150,332,418,10" Height="Auto" Content="Nezaplaceno" Background="#FFB93030" BorderBrush="{x:Null}" Click="NezaplacenoButton"/>
             </Grid>
         </TabItem>
 
