@@ -25,7 +25,7 @@ namespace Dluznicek
     {
         private SQLiteConnection db = new SQLiteConnection("FinalSQLClean.db3");
         private SQLiteConnection db2 = new SQLiteConnection("DataSQLClean4.db3");
-        ObservableCollection<TodoItem> itemsFromDb;
+        ObservableCollection<TodoItem> itemsFromDb { get; set; }
         ObservableCollection<Dluh> itemsFromDb2;
         List<Dluh> itemsDluhy = new List<Dluh>();
         ObservableCollection<TodoItem> vysledkyDb2;
@@ -38,9 +38,10 @@ namespace Dluznicek
             LoadTable();
             date_picker.SelectedDate = DateTime.Today;
             date_picker.SelectedDate = DateTime.Today;
-            GetStats(1, 1, 1, "já zaklad");
+            GetStats(1, 1, 1);
             LoadDluhy();
             KontrolaDluh();
+            this.DataContext = this;
 
         }
         public void KontrolaDluh()
@@ -124,7 +125,7 @@ namespace Dluznicek
                 App.Database.SaveItemAsync(item);
                 itemsFromDb.Add(item);
             }
-            GetStats(1, 1, 1,"po ulozeni");
+            GetStats(1, 1, 1);
             LoadDluhy();
 
             
@@ -153,17 +154,16 @@ namespace Dluznicek
         public void LoadTable()
         {
             itemsFromDb = new ObservableCollection<TodoItem>(App.Database.GetItemsAsync().Result);
-            SeznamListView.ItemsSource = itemsFromDb;
         }
-        public void GetStats(int rok,int mesic,int den,string kdo)
+        public void GetStats(int rok,int mesic,int den)
         {
-            Console.WriteLine("Probiham " + kdo);
             itemsFromDb.Clear();
             int celkova_cena = 0;
             var SelectedDate = new DateTime(rok, mesic, den);
             var vysledek = db.Table<TodoItem>().Where(x => x.Datum >= SelectedDate);
             SeznamListView.ItemsSource = vysledek;
-            foreach(var item in vysledek)
+            //itemsFromDb = new ObservableCollection<TodoItem>(db.Table<TodoItem>().Where(x => x.Datum >= SelectedDate);
+            foreach (var item in vysledek)
             {
                 celkova_cena += Convert.ToInt32(item.Item_price);
             }
@@ -172,7 +172,7 @@ namespace Dluznicek
 
         private void Button_Click_All(object sender, RoutedEventArgs e)
         {
-            GetStats(1, 1, 1, "já all");
+            GetStats(1, 1, 1);
 
         }
         private void Button_Click_Year(object sender, RoutedEventArgs e)
@@ -180,7 +180,7 @@ namespace Dluznicek
             int today_den = (int)DateTime.Now.Day;
             int today_month = (int)DateTime.Now.Month;
             int today_year = (int)DateTime.Now.Year;
-            GetStats(today_year-1, today_month, today_den,"já");
+            GetStats(today_year-1, today_month, today_den);
             //Console.WriteLine("YEAR: "+(today_year-1) + "Month: "+ today_month + "Den: "+ today_den);
         }
         private void Button_Click_Month(object sender, RoutedEventArgs e)
@@ -188,7 +188,7 @@ namespace Dluznicek
             int today_den = (int)DateTime.Now.Day;
             int today_month = (int)DateTime.Now.Month;
             int today_year = (int)DateTime.Now.Year;
-            GetStats(today_year, today_month-1, today_den, "já");
+            GetStats(today_year, today_month-1, today_den);
 
             //Console.WriteLine("YEAR: "+(today_year-1) + "Month: "+ today_month + "Den: "+ today_den);
             //https://stackoverflow.com/questions/591752/get-the-previous-months-first-and-last-day-dates-in-c-sharp
@@ -198,20 +198,13 @@ namespace Dluznicek
             int today_den = (int)DateTime.Now.Day;
             int today_month = (int)DateTime.Now.Month;
             int today_year = (int)DateTime.Now.Year;
-            GetStats(today_year, today_month, today_den-7, "já");
+            GetStats(today_year, today_month, today_den-7);
             //Console.WriteLine("YEAR: "+(today_year-1) + "Month: "+ today_month + "Den: "+ today_den);
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             
-            if (TabDluhy.IsSelected)
-            {
-                
-            }
-            if(TabStats.IsSelected)
-            {
-            }
         }
 
         private void cbox2_SelectionChanged(object sender, SelectionChangedEventArgs e)

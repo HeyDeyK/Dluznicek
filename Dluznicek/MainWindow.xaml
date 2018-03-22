@@ -47,10 +47,10 @@
                     <ColumnDefinition Width="4*"/>
                     <ColumnDefinition Width="69*"/>
                 </Grid.ColumnDefinitions>
-                <Button Content="Vše" Height="25" Margin="16,10,0,0" Click="Button_Click_All" HorizontalAlignment="Left" Width="70" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+                <Button Command="{Binding AllCommand}" Content="Vše" Height="25" Margin="16,10,0,0" Click="Button_Click_All" HorizontalAlignment="Left" Width="70" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
                 <Button Content="Rok" Height="25" Width="70" Margin="64.395,10,0,0" Click="Button_Click_Year" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1"/>
                 <Button Content="Měsíc" Height="25" Width="70" Margin="139.395,10,0,0" Click="Button_Click_Month" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1"/>
-                <ListView x:Name="SeznamListView"  Margin="10,35,10,24" Grid.ColumnSpan="2">
+                <ListView x:Name="SeznamListView"  Margin="10,35,10,24" Grid.ColumnSpan="2" ItemsSource="{Binding itemsFromDb}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Položka" DisplayMemberBinding="{Binding Item_price}" Width="150"/>
